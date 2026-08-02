@@ -84,10 +84,12 @@ export default function ProjectDetail() {
             className={`flex flex-col ${imageGap === 0 ? 'overflow-hidden rounded-xl md:rounded-2xl' : ''}`}
             style={{ gap: `${imageGap}px` }}
           >
-            {images.map((src, index) => (
+            {images.map((image, index) => (
               <GalleryImage
-                key={src}
-                src={src}
+                key={image.src}
+                src={image.src}
+                width={image.width}
+                height={image.height}
                 alt={`${project.title} — 项目图片 ${index + 1}`}
                 eager={index === 0}
                 reduceMotion={Boolean(reduceMotion)}
@@ -152,11 +154,10 @@ export default function ProjectDetail() {
   );
 }
 
-function GalleryImage({ src, alt, eager, reduceMotion, separated }: { key?: string; src: string; alt: string; eager: boolean; reduceMotion: boolean; separated: boolean }) {
+function GalleryImage({ src, width, height, alt, eager, reduceMotion, separated }: { key?: string; src: string; width: number; height: number; alt: string; eager: boolean; reduceMotion: boolean; separated: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isGif = /\.gif(?:$|\?)/i.test(src);
   const [isVisible, setIsVisible] = useState(eager);
-  const [aspectRatio, setAspectRatio] = useState<number>();
 
   useEffect(() => {
     if (!isGif || !containerRef.current) return;
@@ -172,16 +173,18 @@ function GalleryImage({ src, alt, eager, reduceMotion, separated }: { key?: stri
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: reduceMotion ? 0 : 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-      style={isGif && !isVisible ? { aspectRatio: aspectRatio ?? 16 / 9 } : undefined}
+      style={{ aspectRatio: `${width} / ${height}` }}
       className={`block w-full overflow-hidden bg-neutral-950 ${separated ? 'rounded-xl md:rounded-2xl' : ''}`}
     >
       {(!isGif || isVisible) && (
         <img
           src={src}
           alt={alt}
+          width={width}
+          height={height}
           loading={eager ? 'eager' : 'lazy'}
           fetchPriority={eager ? 'high' : 'auto'}
-          onLoad={(event) => setAspectRatio(event.currentTarget.naturalWidth / event.currentTarget.naturalHeight)}
+          decoding="async"
           className="w-full h-auto block"
         />
       )}

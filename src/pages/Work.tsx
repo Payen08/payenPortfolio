@@ -110,6 +110,8 @@ export default function Work() {
                       layoutId={`project-img-${project.id}`}
                       src={project.image}
                       alt={project.title}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover"
                       animate={hoveredId === project.id ? { scale: 1.06 } : { scale: 1 }}
                       transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}

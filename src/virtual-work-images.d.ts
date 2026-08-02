@@ -1,4 +1,10 @@
 declare module 'virtual:work-images' {
-  const workImages: Record<string, string[]>;
+  type WorkImage = {
+    src: string;
+    width: number;
+    height: number;
+  };
+
+  const workImages: Record<string, WorkImage[]>;
   export default workImages;
 }

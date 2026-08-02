@@ -1,4 +1,6 @@
 import { motion } from 'motion/react';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { capabilities, experiences } from '../data';
 
 const fadeUp = (delay = 0) => ({
@@ -27,6 +29,23 @@ const steps = [
 const software = ['Figma', 'Framer', 'Webflow', 'Keyshot', 'Cinema 4D', 'Adobe CC'];
 
 export default function About() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash !== '#work-experience') return;
+
+    const frame = window.requestAnimationFrame(() => {
+      const target = document.getElementById('work-experience');
+      if (!target) return;
+
+      const headerOffset = 88;
+      const targetTop = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+      window.scrollTo({ top: Math.max(0, targetTop), behavior: 'auto' });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [location.hash]);
+
   return (
     <div className="pt-28 md:pt-32 pb-16 md:pb-24 px-4 sm:px-6 max-w-6xl mx-auto min-h-screen">
       <motion.h1
@@ -48,6 +67,8 @@ export default function About() {
           <motion.img
             src={`${import.meta.env.BASE_URL}portfolio/about-photo.png`}
             alt="梁佩雯 Payen"
+            fetchPriority="high"
+            decoding="async"
             className="w-full aspect-[4/5] object-cover rounded-2xl"
             initial={{ filter: 'grayscale(100%) brightness(0.85)' }}
             whileInView={{ filter: 'grayscale(0%) brightness(1)' }}
@@ -122,7 +143,7 @@ export default function About() {
         whileInView="visible"
         viewport={{ once: true, margin: '-60px' }}
         variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
-        className="mb-20 md:mb-28"
+        className="scroll-mt-24 mb-20 md:mb-28"
         aria-labelledby="work-experience-title"
       >
         <motion.div variants={fadeUp()} className="flex items-end justify-between gap-6 mb-8 md:mb-10">

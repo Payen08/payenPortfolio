@@ -34,3 +34,23 @@ public/work/project-01/
   imageGap: 24, // 间距单位为 px，每张图片独立带圆角
 }
 ```
+
+## 清晰度与加载速度
+
+页面构建时会读取每张图片的原始宽高，为懒加载图片预留准确空间。除第一张图外，其余图片会在接近可视区域时再加载。
+
+静态 UI 截图建议使用项目根目录的转换脚本：
+
+```bash
+python3 convert_webp.py public/work
+```
+
+转换结果会写入 `public/work-webp`，不会覆盖原图。PNG 默认使用无损 WebP，不缩小尺寸，因此界面文字和细线不会变糊。确认结果后，再用优化文件替换对应项目中的原图；不要把原图和同名 WebP 同时留在项目文件夹中，否则页面会把两张都展示出来。
+
+照片可使用高质量有损模式进一步减小体积：
+
+```bash
+python3 convert_webp.py public/portfolio --lossy-png --photo-quality 94
+```
+
+GIF 不建议直接套用静态图片参数。它们是当前体积最大的资源，优先保留现有 GIF 配合视口懒加载；如需进一步压缩，建议使用视频编码工具转换成 WebM/MP4，而不是降低 WebP 清晰度。

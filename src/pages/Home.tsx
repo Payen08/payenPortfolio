@@ -1,6 +1,7 @@
 import { AnimatePresence, motion, useScroll, useTransform, useSpring } from 'motion/react';
 import { ArrowRight, Mail, Phone, X, Briefcase, Award, ChevronDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { experiences, capabilities, stats, projects } from '../data';
 import TiltCard from '../components/TiltCard';
 import ScrollGallery from '../components/ScrollGallery';
@@ -26,17 +27,15 @@ const fadeUp = (delay = 0) => ({
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
   const [contactOpen, setContactOpen] = useState(false);
-  const [selectedExperience, setSelectedExperience] = useState<(typeof experiences)[number] | null>(null);
 
   useEffect(() => {
-    if (!contactOpen && !selectedExperience) return;
+    if (!contactOpen) return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setContactOpen(false);
-        setSelectedExperience(null);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -45,7 +44,7 @@ export default function Home() {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [contactOpen, selectedExperience]);
+  }, [contactOpen]);
 
   /* Subtle parallax on scroll for hero text */
   const { scrollY } = useScroll();
@@ -102,6 +101,8 @@ export default function Home() {
               <img
                 src={`${import.meta.env.BASE_URL}portfolio/home-avatar.png`}
                 alt="梁佩雯 Payen"
+                fetchPriority="high"
+                decoding="async"
                 className="w-full h-full object-cover rounded-2xl shadow-[0_0_48px_rgba(0,0,0,0.65)]"
               />
             </motion.div>
@@ -188,6 +189,8 @@ export default function Home() {
             <motion.img
               src={`${import.meta.env.BASE_URL}portfolio/home-avatar.png`}
               alt="梁佩雯 Payen"
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-full object-cover rounded-[18px] shadow-[0_0_60px_rgba(0,0,0,0.6)]"
               animate={{ boxShadow: ['0 0 40px rgba(161,224,0,0)', '0 0 60px rgba(161,224,0,0.12)', '0 0 40px rgba(161,224,0,0)'] }}
               transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
@@ -320,28 +323,31 @@ export default function Home() {
             </h3>
             <div className="space-y-4 relative z-10">
               {experiences.slice(0, 2).map((exp, i) => (
-                <motion.button
-                  type="button"
+                <motion.div
                   key={exp.id}
-                  onClick={() => setSelectedExperience(exp)}
-                  aria-label={`查看${exp.company}工作经历`}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.12, duration: 0.5 }}
-                  className="cursor-pointer w-full text-left flex justify-between items-start gap-4 border-b border-white/[0.07] pb-4 last:border-0 last:pb-0 group/exp rounded-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#A1E000]"
+                  className="border-b border-white/[0.07] pb-4 last:border-0 last:pb-0"
                 >
-                  <div className="min-w-0">
-                    <h4 className="font-medium text-white group-hover/exp:text-[#A1E000] transition-colors text-sm">{exp.role}</h4>
-                    <div className="text-xs text-neutral-500 mt-0.5 relative inline-block break-words">
-                      {exp.company}
-                      <span className="absolute -bottom-px left-0 w-0 group-hover/exp:w-full h-px bg-[#A1E000]/50 transition-all duration-300 ease-out" />
+                  <Link
+                    to="/about#work-experience"
+                    aria-label={`前往 About Me 查看${exp.company}工作经历`}
+                    className="cursor-pointer w-full text-left flex justify-between items-start gap-4 group/exp rounded-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#A1E000]"
+                  >
+                    <div className="min-w-0">
+                      <h4 className="font-medium text-white group-hover/exp:text-[#A1E000] transition-colors text-sm">{exp.role}</h4>
+                      <div className="text-xs text-neutral-500 mt-0.5 relative inline-block break-words">
+                        {exp.company}
+                        <span className="absolute -bottom-px left-0 w-0 group-hover/exp:w-full h-px bg-[#A1E000]/50 transition-all duration-300 ease-out" />
+                      </div>
                     </div>
-                  </div>
-                  <span className="text-xs font-mono text-neutral-600 bg-black/50 px-2 py-1 rounded-md flex-shrink-0">
-                    {exp.period}
-                  </span>
-                </motion.button>
+                    <span className="text-xs font-mono text-neutral-600 bg-black/50 px-2 py-1 rounded-md flex-shrink-0">
+                      {exp.period}
+                    </span>
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </TiltCard>
@@ -448,55 +454,6 @@ export default function Home() {
                 </div>
               </div>
 
-            </motion.section>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {selectedExperience && (
-          <motion.div
-            role="presentation"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={() => setSelectedExperience(null)}
-            className="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-          >
-            <motion.section
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="experience-dialog-title"
-              initial={{ opacity: 0, y: 24, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 16, scale: 0.98 }}
-              transition={{ duration: 0.24, ease: [0.25, 0.46, 0.45, 0.94] }}
-              onClick={(event) => event.stopPropagation()}
-              className="relative w-full max-w-xl max-h-[85vh] overflow-y-auto rounded-3xl border border-white/10 bg-[#101010] p-6 sm:p-8 shadow-2xl"
-            >
-              <div className="absolute top-0 left-0 right-0 h-1 bg-[#A1E000]" />
-              <button
-                type="button"
-                onClick={() => setSelectedExperience(null)}
-                autoFocus
-                aria-label="关闭工作经历"
-                className="cursor-pointer absolute top-5 right-5 w-10 h-10 rounded-full border border-white/10 bg-white/[0.04] text-neutral-400 hover:text-white hover:bg-white/[0.08] flex items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A1E000] transition-colors"
-              >
-                <X size={18} aria-hidden="true" />
-              </button>
-
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A1E000] mb-4">Recent Experience</p>
-              <h2 id="experience-dialog-title" className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-display pr-12 mb-3">
-                {selectedExperience.company}
-              </h2>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-7">
-                <span className="text-sm text-white">{selectedExperience.role}</span>
-                <span className="text-sm font-mono tabular-nums text-neutral-500">{selectedExperience.period}</span>
-              </div>
-              <div className="border-t border-white/[0.08] pt-6">
-                <p className="text-sm sm:text-base text-neutral-300 leading-7 sm:leading-8">{selectedExperience.description}</p>
-              </div>
             </motion.section>
           </motion.div>
         )}

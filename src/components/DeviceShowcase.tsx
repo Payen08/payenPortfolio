@@ -162,6 +162,8 @@ export default function DeviceShowcase({ projects }: DeviceShowcaseProps) {
                     key={activeProject.id}
                     src={activeProject.image}
                     alt={activeProject.title}
+                    loading="lazy"
+                    decoding="async"
                     initial={{ opacity: 0, scale: 1.015 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
@@ -214,7 +216,14 @@ export default function DeviceShowcase({ projects }: DeviceShowcaseProps) {
                 className="cursor-pointer group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A1E000] rounded-2xl"
               >
                 <div className="relative aspect-[16/10] bg-neutral-900 rounded-2xl overflow-hidden border border-white/10 shadow-lg">
-                  <img src={p.image} alt={p.title} className="w-full h-full object-cover" />
+                  <img
+                    src={p.image}
+                    alt={p.title}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    fetchPriority={index === 0 ? 'high' : 'auto'}
+                    decoding="async"
+                    className="w-full h-full object-cover"
+                  />
                   <span className="absolute top-3 right-3 min-w-9 h-9 px-2 rounded-full bg-black/65 backdrop-blur-md border border-white/10 inline-flex items-center justify-center text-xs text-white tabular-nums">
                     {String(index + 1).padStart(2, '0')}
                   </span>
