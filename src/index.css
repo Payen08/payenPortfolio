@@ -8,14 +8,33 @@
 
 html {
   scroll-behavior: smooth;
-  cursor: none;
 }
 
 body {
-  cursor: none;
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@media (pointer: fine) {
+  html,
+  body {
+    cursor: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+  }
+}
+
+/* Discourage casual image saving without affecting text selection. */
+img {
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  user-select: none;
 }
 
 /* ─── Custom Scrollbar ───────────────────────────────────────────────────── */

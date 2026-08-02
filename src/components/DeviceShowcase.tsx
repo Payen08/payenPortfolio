@@ -12,7 +12,7 @@ export interface Project {
   title: string;
   category: string;
   image: string;
-  description: string;
+  description?: string;
   role: string;
   year: string;
 }
@@ -32,64 +32,43 @@ export default function DeviceShowcase({ projects }: DeviceShowcaseProps) {
   useEffect(() => {
     if (reducedMotion) return;
 
-    let ctx = gsap.context(() => {
-      gsap.set(deviceRef.current, { y: '30vh', scale: 0.82, opacity: 0, rotateX: 8 });
-      const tl = gsap.timeline();
-      tl.to(deviceRef.current, {
-        y: 0, scale: 1, opacity: 1, rotateX: 0,
-        duration: 0.15, ease: 'power3.out',
-      });
-      tl.to({}, { duration: 0.85 });
+    const media = gsap.matchMedia();
+    media.add('(min-width: 768px)', () => {
+      const ctx = gsap.context(() => {
+        gsap.set(deviceRef.current, { y: '30vh', scale: 0.82, opacity: 0, rotateX: 8 });
+        const tl = gsap.timeline();
+        tl.to(deviceRef.current, {
+          y: 0, scale: 1, opacity: 1, rotateX: 0,
+          duration: 0.15, ease: 'power3.out',
+        });
+        tl.to({}, { duration: 0.85 });
 
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: 'top top',
-        end: `+=${projects.length * 120}%`,
-        pin: wrapperRef.current,
-        scrub: true,
-        pinSpacing: true,
-        animation: tl,
-        onUpdate: (self) => {
-          const index = Math.min(projects.length - 1, Math.floor(self.progress * projects.length));
-          setActiveIndex(Math.max(0, index));
-        },
-      });
-    }, containerRef);
+        ScrollTrigger.create({
+          trigger: containerRef.current,
+          start: 'top top',
+          end: `+=${projects.length * 120}%`,
+          pin: wrapperRef.current,
+          scrub: true,
+          pinSpacing: true,
+          animation: tl,
+          onUpdate: (self) => {
+            const index = Math.min(projects.length - 1, Math.floor(self.progress * projects.length));
+            setActiveIndex(Math.max(0, index));
+          },
+        });
+      }, containerRef);
 
-    return () => ctx.revert();
+      return () => ctx.revert();
+    });
+
+    return () => media.revert();
   }, [projects.length, reducedMotion]);
 
   if (!activeProject) return null;
 
-  if (reducedMotion) {
-    return (
-      <div className="py-24 px-6 md:px-12 flex flex-col gap-16 max-w-7xl mx-auto">
-        {projects.map((p) => (
-          <div key={p.id} className="flex flex-col gap-6">
-            <Link
-              to={`/project/${p.id}`}
-              aria-label={`查看项目：${p.title}`}
-              className="cursor-pointer block aspect-[16/10] bg-neutral-900 rounded-2xl overflow-hidden border border-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A1E000]"
-            >
-              <img src={p.image} alt={p.title} className="w-full h-full object-cover" />
-            </Link>
-            <div>
-              <p className="text-sm text-[#A1E000] mb-2">{p.category}</p>
-              <h3 className="text-2xl font-semibold mb-4 text-white">{p.title}</h3>
-              <p className="text-neutral-400 mb-4">{p.description}</p>
-              <Link to={`/project/${p.id}`} className="text-white hover:text-[#A1E000] flex items-center gap-2 transition-colors">
-                View Project <ArrowRight size={16} />
-              </Link>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   return (
-    <div ref={containerRef} className="relative hidden md:block w-full bg-black min-h-screen">
-      <div ref={wrapperRef} className="h-screen w-full flex items-center justify-center overflow-hidden relative">
+    <div ref={containerRef} className="relative w-full bg-black">
+      <div ref={wrapperRef} className="hidden md:flex h-screen w-full items-center justify-center overflow-hidden relative">
         <div className="max-w-[1400px] w-full mx-auto px-6 grid grid-cols-12 gap-8 lg:gap-16 items-center">
 
           {/* ── Text Section (Left) ── */}
@@ -134,9 +113,11 @@ export default function DeviceShowcase({ projects }: DeviceShowcaseProps) {
                   >
                     {activeProject.title}
                   </h3>
-                  <p className="text-neutral-500 text-base mb-8 max-w-md leading-relaxed">
-                    {activeProject.description}
-                  </p>
+                  {activeProject.description && (
+                    <p className="text-neutral-500 text-base mb-8 max-w-md leading-relaxed">
+                      {activeProject.description}
+                    </p>
+                  )}
                   <Link
                     to={`/project/${activeProject.id}`}
                     className="inline-flex items-center gap-2.5 text-white bg-white/8 hover:bg-white/14 rounded-full px-5 py-2.5 transition-all w-fit text-sm font-medium border border-white/10 hover:border-white/20 group/link"
@@ -214,28 +195,45 @@ export default function DeviceShowcase({ projects }: DeviceShowcaseProps) {
         </div>
       </div>
 
-      {/* Mobile Fallback */}
-      <div className="md:hidden py-24 px-6 flex flex-col gap-16">
-        {projects.map((p) => (
-          <div key={p.id} className="flex flex-col gap-8">
-            <Link
-              to={`/project/${p.id}`}
-              aria-label={`查看项目：${p.title}`}
-              className="cursor-pointer block aspect-[16/10] bg-neutral-900 rounded-2xl overflow-hidden border border-white/10 shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A1E000]"
-            >
-              <img src={p.image} alt={p.title} className="w-full h-full object-cover" />
-            </Link>
-            <div>
-              <p className="text-sm text-[#A1E000] font-medium mb-3">{p.category}</p>
-              <h3 className="text-3xl font-semibold mb-4 text-white">{p.title}</h3>
-              <p className="text-neutral-400 mb-6 leading-relaxed">{p.description}</p>
-              <Link to={`/project/${p.id}`} className="text-white inline-flex items-center gap-2 border-b border-white/30 pb-1 hover:border-white transition-colors">
-                View Project <ArrowRight size={16} />
-              </Link>
-            </div>
+      {/* Mobile showcase: one project at a time with native horizontal swipe. */}
+      <section className="md:hidden py-16 overflow-hidden" aria-label="精选项目">
+        <div className="px-4 sm:px-6 mb-7 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-xs text-[#A1E000] font-semibold uppercase tracking-[0.2em] mb-2">Selected Work</p>
+            <h2 className="text-3xl font-semibold text-white font-display">Featured Projects</h2>
           </div>
-        ))}
-      </div>
+          <span className="text-xs text-neutral-600 whitespace-nowrap">左右滑动</span>
+        </div>
+
+        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory px-4 sm:px-6 pb-5 hide-scrollbar overscroll-x-contain">
+          {projects.map((p, index) => (
+            <article key={p.id} className="w-[86vw] max-w-[520px] flex-none snap-center">
+              <Link
+                to={`/project/${p.id}`}
+                aria-label={`查看项目：${p.title}`}
+                className="cursor-pointer group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A1E000] rounded-2xl"
+              >
+                <div className="relative aspect-[16/10] bg-neutral-900 rounded-2xl overflow-hidden border border-white/10 shadow-lg">
+                  <img src={p.image} alt={p.title} className="w-full h-full object-cover" />
+                  <span className="absolute top-3 right-3 min-w-9 h-9 px-2 rounded-full bg-black/65 backdrop-blur-md border border-white/10 inline-flex items-center justify-center text-xs text-white tabular-nums">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                </div>
+                <div className="pt-5">
+                  <p className="text-xs text-[#A1E000] font-medium uppercase tracking-[0.18em] mb-2">{p.category}</p>
+                  <div className="flex items-center justify-between gap-4">
+                    <h3 className="text-2xl font-semibold text-white leading-tight">{p.title}</h3>
+                    <span className="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center text-white flex-none group-active:bg-[#A1E000] group-active:text-black">
+                      <ArrowRight size={16} />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </article>
+          ))}
+          <div className="w-px flex-none" aria-hidden="true" />
+        </div>
+      </section>
     </div>
   );
 }

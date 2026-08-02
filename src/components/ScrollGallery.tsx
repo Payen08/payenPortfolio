@@ -76,7 +76,7 @@ export default function ScrollGallery() {
         </div>
 
         {/* ── Two counter-scrolling columns ── */}
-        <div className="flex gap-5 w-full max-w-5xl mx-auto px-8 h-full">
+        <div className="flex gap-6 w-full max-w-[1400px] mx-auto px-8 h-full">
 
           {/* Left column — scrolls UP */}
           <div

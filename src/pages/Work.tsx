@@ -27,7 +27,7 @@ export default function Work() {
     : projects.filter((p) => p.category === filter);
 
   return (
-    <div className="pt-32 pb-24 px-6 max-w-7xl mx-auto min-h-screen">
+    <div className="pt-28 md:pt-32 pb-16 md:pb-24 px-4 sm:px-6 max-w-[1400px] mx-auto min-h-screen">
 
       {/* Header */}
       <motion.div
@@ -38,18 +38,18 @@ export default function Work() {
       >
         <div>
           <h1
-            className="text-5xl md:text-7xl font-bold tracking-tight mb-4"
+            className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-4"
             style={{ fontFamily: "'Syne', sans-serif" }}
           >
-            Selected Work
+            项目案例
           </h1>
           <p className="text-neutral-500 max-w-md text-base leading-relaxed">
-            A curated collection of digital products, brand identities, and experiences.
+            汇集数字产品、品牌视觉与交互体验等项目案例。
           </p>
         </div>
 
         {/* Filter pills */}
-        <div className="flex gap-2 overflow-x-auto pb-2 -mx-6 px-6 md:mx-0 md:px-0 md:pb-0 hide-scrollbar">
+        <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 md:pb-0 hide-scrollbar">
           {categories.map((cat) => (
             <motion.button
               key={cat}
@@ -82,7 +82,7 @@ export default function Work() {
         animate={{ opacity: 1 }}
         className="text-xs text-neutral-600 mb-8 uppercase tracking-widest"
       >
-        {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
+        {filteredProjects.length} 个项目
       </motion.div>
 
       {/* Project Grid */}
@@ -92,7 +92,7 @@ export default function Work() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
         >
           {filteredProjects.map((project) => (
             <motion.div

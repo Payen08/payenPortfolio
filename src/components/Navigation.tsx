@@ -8,9 +8,9 @@ export default function Navigation() {
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
 
   const links = [
-    { path: '/', label: 'Home' },
-    { path: '/work', label: 'Work' },
-    { path: '/about', label: 'About' },
+    { path: '/', label: 'Home 首页' },
+    { path: '/work', label: 'Projects 项目' },
+    { path: '/about', label: 'About Me 关于我' },
   ];
 
   useEffect(() => {
@@ -24,18 +24,18 @@ export default function Navigation() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.2 }}
-      className={`fixed top-0 left-0 right-0 z-50 px-6 py-5 flex justify-between items-center transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-4 sm:py-5 flex justify-between items-center transition-all duration-500 ${
         scrolled
-          ? 'glass border-b border-white/[0.06] shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
+          ? 'bg-black/80 backdrop-blur-xl shadow-[0_10px_32px_rgba(0,0,0,0.38)]'
           : 'bg-transparent'
       }`}
     >
       <Link
         to="/"
-        className="text-xl font-semibold tracking-tight relative group"
+        className="text-sm sm:text-xl font-semibold tracking-tight relative group whitespace-nowrap"
         style={{ fontFamily: "'Syne', sans-serif" }}
       >
-        Portfolio
+        Payen’s Portfolio
         <motion.span
           className="text-[#A1E000]"
           animate={{ opacity: [1, 0.4, 1] }}
@@ -45,7 +45,7 @@ export default function Navigation() {
         </motion.span>
       </Link>
 
-      <div className="flex gap-8">
+      <div className="flex gap-2 sm:gap-8">
         {links.map((link) => {
           const isActive = location.pathname === link.path;
           return (
@@ -54,7 +54,7 @@ export default function Navigation() {
               to={link.path}
               onMouseEnter={() => setHoveredLink(link.path)}
               onMouseLeave={() => setHoveredLink(null)}
-              className="relative text-sm font-medium py-1 text-white transition-colors"
+              className="relative text-[11px] sm:text-sm font-medium py-2 text-white whitespace-nowrap transition-colors"
             >
               <span className={isActive ? 'text-[#A1E000]' : hoveredLink === link.path ? 'text-white' : 'text-neutral-400'}>
                 {link.label}
