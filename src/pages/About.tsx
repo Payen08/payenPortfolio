@@ -65,7 +65,7 @@ export default function About() {
           transition={{ duration: 0.7 }}
         >
           <motion.img
-            src={`${import.meta.env.BASE_URL}portfolio/about-photo.png`}
+            src={`${import.meta.env.BASE_URL}portfolio/about-photo.webp`}
             alt="梁佩雯 Payen"
             fetchPriority="high"
             decoding="async"
